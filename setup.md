@@ -149,6 +149,31 @@ mkdir -Force documentation/plugins
 
 > **Note:** The `.gitignore` file was created by `nx init` and should already include Nx-specific entries. We'll verify and update it in Step 10.
 
+### 3.5 Configure Nx Named Inputs (Critical for Build)
+
+The default `nx.json` created by `nx init` may miss the `namedInputs` section required by build targets.
+
+1. Open `nx.json`
+2. Ensure the `namedInputs` section exists before `targetDefaults`. If missing, add it:
+
+```json
+"namedInputs": {
+  "default": ["{projectRoot}/**/*", "sharedGlobals"],
+  "production": [
+    "default",
+    "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+    "!{projectRoot}/tsconfig.spec.json",
+    "!{projectRoot}/jest.config.[jt]s",
+    "!{projectRoot}/src/test-setup.[jt]s",
+    "!{projectRoot}/test-setup.[jt]s"
+  ],
+  "sharedGlobals": []
+},
+"targetDefaults": {
+  // ...
+}
+```
+
 ---
 
 ## Step 4: Generate Initial Applications
