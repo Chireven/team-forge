@@ -129,45 +129,22 @@ npm install --save-dev @nx/jest
 
 ---
 
-## Step 3: Scaffold Directory Structure
+## Step 3: Create Required Configuration Files
 
-Following the **project-structure.md** rule file, we'll create the authorized directory structure.
+> **Note:** The directory structure (`apps/`, `libs/`, `tools/`) will be created automatically by the Nx generators in Steps 4 and 5. **Do not manually create application or library directories** - this will cause "project already exists" errors.
 
-### 3.1 Create Application Directories
-
-```powershell
-# Create the apps directory structure
-mkdir -p apps/shell/src
-mkdir -p apps/api-gateway/src
-mkdir -p apps/plugins
-```
-
-### 3.2 Create Library Directories
-
-```powershell
-# Create the libs directory structure
-mkdir -p libs/shared/ui
-mkdir -p libs/shared/auth-client
-mkdir -p libs/shared/auth-server
-mkdir -p libs/shared/utils
-mkdir -p libs/shared/data-access
-```
-
-### 3.3 Create Tools and Documentation Directories
-
-```powershell
-# Create tools directory for DevOps scripts
-mkdir -p tools
-
-# Create documentation directory
-mkdir -p documentation/plugins
-```
-
-### 3.4 Create Required Configuration Files
+### 3.1 Create .env File
 
 ```powershell
 # Create .env file (NEVER COMMIT THIS)
 New-Item -Path .env -ItemType File -Force
+```
+
+### 3.2 Create Documentation Directory
+
+```powershell
+# Create documentation directory (not managed by generators)
+mkdir -Force documentation/plugins
 ```
 
 > **Note:** The `.gitignore` file was created by `nx init` and should already include Nx-specific entries. We'll verify and update it in Step 10.
@@ -176,15 +153,18 @@ New-Item -Path .env -ItemType File -Force
 
 ## Step 4: Generate Initial Applications
 
+> **Important:** Nx generators require the `--name` flag for all arguments. Older syntax using positional arguments (e.g., `nx g @nx/react:host shell`) will fail with "Schema does not support positional arguments" error. Always use `--name=<value>` format.
+
 ### 4.1 Generate the Shell (React Host Application)
 
 ```powershell
 # Generate the React Shell application with Module Federation
-npx nx g @nx/react:host shell --directory=apps/shell --style=css --bundler=webpack --e2eTestRunner=none --unitTestRunner=jest --skipFormat=false
+npx nx g @nx/react:host --name=shell --directory=apps/shell --style=css --bundler=webpack --e2eTestRunner=none --unitTestRunner=jest --skipFormat=false
 ```
 
 **Options Explained:**
 - `host`: Creates a Module Federation host application
+- `--name=shell`: Names the application "shell"
 - `--directory=apps/shell`: Places the app in the correct location
 - `--style=css`: Uses standard CSS (we'll manage theming separately)
 - `--bundler=webpack`: Required for Module Federation
@@ -195,10 +175,11 @@ npx nx g @nx/react:host shell --directory=apps/shell --style=css --bundler=webpa
 
 ```powershell
 # Generate the NestJS API Gateway
-npx nx g @nx/nest:application api-gateway --directory=apps/api-gateway --frontendProject=shell --skipFormat=false
+npx nx g @nx/nest:application --name=api-gateway --directory=apps/api-gateway --frontendProject=shell --skipFormat=false
 ```
 
 **Options Explained:**
+- `--name=api-gateway`: Names the application "api-gateway"
 - `--directory=apps/api-gateway`: Places the app in the correct location
 - `--frontendProject=shell`: Links the backend to the Shell frontend
 - `--skipFormat=false`: Ensures code is formatted with Prettier
@@ -211,35 +192,35 @@ npx nx g @nx/nest:application api-gateway --directory=apps/api-gateway --fronten
 
 ```powershell
 # Generate the shared UI component library
-npx nx g @nx/react:library ui --directory=libs/shared --style=css --unitTestRunner=jest --bundler=vite --component=false --skipFormat=false
+npx nx g @nx/react:library --name=ui --directory=libs/shared/ui --style=css --unitTestRunner=jest --bundler=vite --component=false --skipFormat=false
 ```
 
 ### 5.2 Generate Auth Client Library (React)
 
 ```powershell
 # Generate the auth client library for React
-npx nx g @nx/react:library auth-client --directory=libs/shared --style=css --unitTestRunner=jest --bundler=vite --component=false --skipFormat=false
+npx nx g @nx/react:library --name=auth-client --directory=libs/shared/auth-client --style=css --unitTestRunner=jest --bundler=vite --component=false --skipFormat=false
 ```
 
 ### 5.3 Generate Auth Server Library (NestJS)
 
 ```powershell
 # Generate the auth server library for NestJS
-npx nx g @nx/nest:library auth-server --directory=libs/shared --unitTestRunner=jest --skipFormat=false
+npx nx g @nx/nest:library --name=auth-server --directory=libs/shared/auth-server --unitTestRunner=jest --skipFormat=false
 ```
 
 ### 5.4 Generate Utils Library (Shared TypeScript)
 
 ```powershell
 # Generate the shared utils library
-npx nx g @nx/js:library utils --directory=libs/shared --unitTestRunner=jest --bundler=tsc --skipFormat=false
+npx nx g @nx/js:library --name=utils --directory=libs/shared/utils --unitTestRunner=jest --bundler=tsc --skipFormat=false
 ```
 
 ### 5.5 Generate Data Access Library (Shared TypeScript)
 
 ```powershell
 # Generate the data access library
-npx nx g @nx/js:library data-access --directory=libs/shared --unitTestRunner=jest --bundler=tsc --skipFormat=false
+npx nx g @nx/js:library --name=data-access --directory=libs/shared/data-access --unitTestRunner=jest --bundler=tsc --skipFormat=false
 ```
 
 ---
@@ -302,6 +283,40 @@ npm install @tanstack/react-query
 # Install date-fns or similar for date utilities
 npm install date-fns
 ```
+
+### 6.7 Security Audit and Vulnerability Fixes (MANDATORY)
+
+> **Critical:** Per **Rule 13 (dependency-management.md)**, the build must fail if any High or Critical severity vulnerabilities are detected. This step is mandatory before proceeding.
+
+```powershell
+# Run security audit to identify vulnerabilities
+npm audit
+
+# Review the output for HIGH or CRITICAL vulnerabilities
+# If any are found, attempt automatic fixes
+npm audit fix
+
+# If automatic fix doesn't resolve all issues, try force update
+# WARNING: This may introduce breaking changes - review carefully
+npm audit fix --force
+
+# Verify all HIGH/CRITICAL vulnerabilities are resolved
+npm audit --audit-level=high
+```
+
+**Expected Results:**
+- ✅ `found 0 vulnerabilities` - **PROCEED**
+- ❌ `X high severity vulnerabilities` - **MUST FIX before continuing**
+- ⚠️ Low/Moderate vulnerabilities - Acceptable for now, but should be tracked
+
+**If vulnerabilities persist after `npm audit fix --force`:**
+1. Review the audit output for specific package names
+2. Check if updates are available: `npm outdated`
+3. Manually update problematic packages: `npm update <package-name>`
+4. If no fix exists, document the vulnerability and mitigation plan
+5. Consider alternative packages if the vulnerability is in a direct dependency
+
+> **Note:** This audit ensures we start with a secure dependency tree. CI/CD will enforce the same check on every build (Rule 7: cicd.md).
 
 ---
 
