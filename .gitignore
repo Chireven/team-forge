@@ -13,8 +13,11 @@ pnpm-lock.yaml  # Only if you are strictly using npm (Rule 13)
 dist/
 # Temporary files used by Nx to speed up builds
 tmp/
+.cache/
 # The Nx Cloud and local cache directory
 .nx/
+.nx/cache
+.nx/workspace-data
 
 # ------------------------------------------------------
 # 3. Environment & Secrets (Rule 5: Zero-Trust)
