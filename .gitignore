@@ -1,0 +1,57 @@
+# ------------------------------------------------------
+# 1. Dependencies
+# ------------------------------------------------------
+node_modules/
+npm-debug.log
+yarn-error.log
+pnpm-lock.yaml  # Only if you are strictly using npm (Rule 13)
+
+# ------------------------------------------------------
+# 2. Nx & Build Artifacts (CRITICAL)
+# ------------------------------------------------------
+# The build output directory
+dist/
+# Temporary files used by Nx to speed up builds
+tmp/
+# The Nx Cloud and local cache directory
+.nx/
+
+# ------------------------------------------------------
+# 3. Environment & Secrets (Rule 5: Zero-Trust)
+# ------------------------------------------------------
+# Local environment variables containing secrets
+.env
+.env.local
+.env.*.local
+
+# ------------------------------------------------------
+# 4. Team Forge V2 Specifics
+# ------------------------------------------------------
+# Generated Plugin Artifacts (Rule 18)
+*.plug
+# Coverage reports from tests
+coverage/
+# Local database files (if you use SQLite for quick dev)
+*.sqlite
+*.sqlite-journal
+
+# ------------------------------------------------------
+# 5. IDE & OS Noise
+# ------------------------------------------------------
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ------------------------------------------------------
+# 6. Debugging & Logs (Rule 15)
+# ------------------------------------------------------
+logs/
+*.log
+pid
+pids
+*.pid
+*.seed
+*.pid.lock
