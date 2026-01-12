@@ -4,7 +4,7 @@ import axios from 'axios';
 import SetupPage from './pages/SetupPage';
 import LoginPage from './pages/LoginPage';
 import NxWelcome from './nx-welcome';
-import { ThemeProvider, ToastProvider, ToastContext } from '@team-forge/shared/ui';
+import { ThemeProvider, ToastProvider, useToast } from '@team-forge/shared/ui';
 import { NavigationProvider, useNavigation } from '@team-forge/shared/utils';
 import { PermissionProvider } from '@team-forge/shared/auth-client';
 import { DashboardLayout } from './components/layout/DashboardLayout';
@@ -134,12 +134,12 @@ const queryClient = new QueryClient({
 const AuthLoader = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = React.useState({ isSuperAdmin: false, permissions: [] as string[] });
   const [loaded, setLoaded] = React.useState(false);
-  const { showToast } = React.useContext(ToastContext) as any;
+  const { toast } = useToast();
 
   React.useEffect(() => {
     // 1. Setup Axios Interceptors via Shared Utils
     const cleanup = setupAxiosInterceptors(() => {
-      showToast?.('Session Expired. Please login again.', 'error');
+      toast?.('Session Expired. Please login again.', 'error');
       setTimeout(() => {
         window.location.href = '/login';
       }, 1000);
@@ -166,7 +166,7 @@ const AuthLoader = ({ children }: { children: React.ReactNode }) => {
     }
 
     return () => cleanup();
-  }, [showToast]);
+  }, [toast]);
 
   if (!loaded) return <div>Initializing Auth...</div>;
 
