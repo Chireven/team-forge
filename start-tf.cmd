@@ -1,0 +1,1 @@
+npx nx run-many --target=serve --projects=shell,user-admin,api-gateway --parallel=3

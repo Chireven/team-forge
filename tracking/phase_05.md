@@ -1,45 +1,54 @@
-# PHASE 5: THE FIRST PLUGIN (USER ADMIN & FEDERATION)
-# ACT AS: Senior Solutions Architect & Lead Developer.
+# PHASE 5: THE FIRST PLUGIN (COMPLETED)
 
-We are ready to validate the architecture by building the first "Remote Plugin": **User Management**.
-This requires upgrading the Shell to support **Module Federation** and creating the new Remote app.
+**Status:** ✅ Completed & Wired
 
-# 1. ARCHITECTURAL REQUIREMENTS
+## 1. Summary
+We have proven the **Shell + Plugin** architecture by creating the **User Admin** remote application and loading it dynamically into the Shell.
+Role-Based Access Control (RBAC) and Shared Logic (Navigation) are fully operational across the boundary.
 
-A. BACKEND EXPANSION (NestJS)
-   - We need endpoints to manage the users created in Phase 2.
-   - Update `AuthModule` (or create `UsersModule`):
-     - `GET /api/users`: List all users (DTO: `id`, `email`, `isSuperAdmin`, `createdAt`).
-     - `DELETE /api/users/:id`: Remove a user.
-   - **Security:** Protect these endpoints with `@UseGuards(JwtAuthGuard)` and `@RequirePermission('user.admin')`.
+## 2. Key Implementations
 
-B. FRONTEND INFRASTRUCTURE (Module Federation)
-   - **Convert Shell:** If not already configured, convert `apps/shell` to a **Module Federation Host**.
-   - **Create Remote:** Generate a new React application: `apps/plugins/user-admin`.
-     - Configuration: It must be a **Module Federation Remote**.
-     - Port: Run this plugin on port `4201`.
+### A. Backend (`api-gateway`)
+- **UsersModule**: Created to manage user data.
+- **UsersController**:
+  - `GET /api/users`: Returns list of users.
+  - `DELETE /api/users/:id`: Deletes a user.
+  - **Security**: Protected by `PermissionsGuard` and requires `user.admin` permission.
 
-C. PLUGIN IMPLEMENTATION (Rule 21 & 3)
-   - **Feature:** A data table listing all users.
-     - Columns: Email, Role (Super Admin), Actions (Delete).
-   - **Permissions:** Register `user.admin` permission.
-   - **Nav Registration:** Use the `NavigationService` (Phase 3) to inject a "Users" link into the "Settings" section of the Shell Sidebar.
+### B. Remote Plugin (`user-admin`)
+- **Location**: `apps/plugins/user-admin` (running on **4201**).
+- **Federation Config**: Exposes `./Module` mapping to `src/app/app.tsx`.
+- **Logic**:
+  - Uses `useNavigation` to register itself in the "Settings" sidebar section.
+  - Fetches data from `/api/users`.
+  - Uses `Shared UI` components (`Button`).
 
-# 2. INTEGRATION LOGIC
+### C. Shell Integration (`shell`)
+- **Federation Config**: Registers `user-admin` as a remote at `http://localhost:4201/remoteEntry.js`.
+- **Routing**: Added lazy-loaded route `/user-admin/*`.
+- **TypeScript**: Added `remotes.d.ts` to allow importing the remote.
 
-A. THE "WIRING"
-   - Configure `module-federation.config.js` (or `vite.config.ts`) in the Shell to load `user-admin` from `http://localhost:4201`.
-   - In `apps/shell`, add a Route that renders the Remote Component.
+## 3. Verification Instructions
 
-B. SHARED LIBRARIES (Rule 3)
-   - Ensure the Plugin imports UI components (Buttons, Cards) from `libs/shared/ui`. It MUST NOT implement its own basic UI controls.
-   - Ensure the Plugin shares `react`, `react-dom`, and `react-router-dom` with the Shell (Singleton mode) to prevent "Duplicate React" errors.
+To verify the full system:
 
-# 3. EXECUTION STEPS
+```bash
+# 1. Start the API
+npx nx serve api-gateway
 
-Generate the commands and code to:
-1.  Implement the Backend `UsersController` and endpoints.
-2.  Convert/Configure the Workspace for Module Federation (Host + Remote).
-3.  Scaffold the `user-admin` plugin.
-4.  Implement the "User List" component using the Shared UI lib.
-5.  **Critical:** Show the exact config changes needed in `apps/shell/module-federation.config.js` to load this new remote.
+# 2. Start the User Admin Remote (MUST run on 4201)
+npx nx serve user-admin --port=4201
+
+# 3. Start the Shell
+npx nx serve shell
+```
+
+**Manual Test Plan:**
+1.  **Login** as a Super Admin.
+2.  Observed "Users" link appearing in the Sidebar (Settings section).
+3.  Click "Users".
+4.  Verify the User List loads (proving Module Federation worked).
+5.  Delete a user (proving Backend Integration worked).
+
+## 4. Next Steps
+Phase 6 will focus on **Plugin Isolation & Data Providers** (e.g., Task Management with local/Jira adapters).

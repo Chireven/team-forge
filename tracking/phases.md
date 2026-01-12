@@ -1,36 +1,27 @@
-# PHASE IMPLEMENTATION INDEX (AI MEMORY)
+# PROJECT PHASES INDEX
+This file tracks the progress of the Team Forge V2 "Shell & Plugin" Architecture.
 
-**Purpose:** This file acts as a pointer to the "Source of Truth" for completed architectural phases. The `phase_##.setup.md` files contain the granular implementation details, file paths, and design decisions for that specific chunk of work.
+## [Phase 1: Monorepo & Setup](./phase_01.md)
+**Status:** ✅ Complete
 
-## 📂 Phase 02: Identity & Infrastructure
-**File:** `tracking/phase_02.setup.md`
-**Scope:** Foundation, Database, Authentication.
-**Critical Implementations:**
-- **Database:** MS SQL Server (Docker), TypeORM Config.
-- **Auth Backend:** `AuthService`, `JwtStrategy`, `Argon2` hashing.
-- **Auth Frontend:** `SetupPage` (Wizard), `LoginPage`, `ProtectedRoute`.
-- **Entities:** `User` entity (UUID, Email, PasswordHash).
+## [Phase 2: Identity Layer](./phase_02.md)
+**Status:** ✅ Complete
 
-## 📂 Phase 03: Shell Layout & Navigation
-**File:** `tracking/phase_03.setup.md`
-**Scope:** UI Structure, Theming, Extensibility hooks.
-**Critical Implementations:**
-- **Theme Engine:** `ThemeProvider`, `tokens.ts` (Design Tokens), CSS Variables.
-- **Navigation:** `NavigationContext` (Registry for Plugins to inject menu items).
-- **Layout:** `DashboardLayout` (Fixed Sidebar, Sticky Topbar, Outlet).
+## [Phase 3: Shell Layout & Navigation](./phase_03.md)
+**Status:** ✅ Complete
 
-## 📂 Phase 04: Core Services (The Nervous System)
-**File:** `tracking/phase_04.setup.md`
-**Scope:** Communication, Security, User Feedback.
-**Critical Implementations:**
-- **Event Bus:** `GlobalEventBus` (RxJS Subject), `EventEnvelope` (Traceability).
-- **RBAC:** 
-    - BE: `PermissionsGuard`, `@RequirePermission`.
-    - FE: `PermissionContext`, `<Restricted>` component.
-- **Notifications:** `ToastProvider`, `useToast`, Z-Index 9999 (God Layer).
+## [Phase 4: Core Services](./phase_04.md)
+**Status:** ✅ Complete
 
-## 🔮 Phase 05: The First Plugin (Planned)
-**Scope:** Module Federation, Remote Loading.
-**Key Components:**
-- `task-board` (Remote App).
-- Plugin Loading/Mounting Logic in Shell.
+## [Phase 5: The First Plugin (User Admin)](./phase_05.md)
+**Status:** ✅ Complete
+
+## [Phase 6: Operational Hardening](./phase_06.md)
+**Status:** ✅ Complete
+- **Backend:** Pino Logging, Validation, Standard Envelopes.
+- **Frontend:** Axios Interceptors, TanStack Query.
+
+## Phase 7: Data Provider Plugins (Task Board)
+**Status:** ⏳ Pending
+- **Goal:** Implement "Parent Plugin" (Task Board) with swappable Data Adapters.
+- **Feature:** Local DB Adapter vs External (Jira) Adapter.

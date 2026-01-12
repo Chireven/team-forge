@@ -1,0 +1,29 @@
+﻿
+> nx run data-access:build  [existing outputs match the cache, left as is]
+
+Compiling TypeScript files for project "data-access"...
+Done compiling TypeScript files for project "data-access".
+
+> nx run api-gateway:build
+
+LOADING CUSTOM WEBPACK CONFIG
+[1m[31mERROR[39m[22m in [1m./src/app/filters/all-exceptions.filter.ts:[32m[1m31:38[22m[39m[1m[39m[22m
+[90mTS2551: [39mProperty 'getRequest' does not exist on type 'AbstractHttpAdapter<any, any, any>'. Did you mean 'getRequestUrl'?
+  [0m [90m 29 |[39m             meta[33m:[39m {
+   [90m 30 |[39m                 timestamp[33m:[39m [36mnew[39m [33mDate[39m()[33m.[39mtoISOString()[33m,[39m
+  [31m[1m>[22m[39m[90m 31 |[39m                 traceId[33m:[39m httpAdapter[33m.[39mgetRequest(ctx[33m.[39mgetRequest())[33m?[39m[33m.[39mheaders[[32m'x-request-id'[39m] [33m||[39m [32m'no-trace-id'[39m[33m,[39m
+   [90m    |[39m                                      [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 32 |[39m                 path[33m:[39m httpAdapter[33m.[39mgetRequestUrl(ctx[33m.[39mgetRequest())[33m,[39m
+   [90m 33 |[39m             }[33m,[39m
+   [90m 34 |[39m             error[33m:[39m {[0m
+
+webpack compiled with [1m[31m1 error[39m[22m (361a725c99e57f41)
+
+
+
+ NX   Ran target build for project api-gateway and 1 task(s) they depend on (22s)
+
+   ├ù  1/2 failed
+   ΓêÜ  1/2 succeeded [1 read from cache]
+
+
