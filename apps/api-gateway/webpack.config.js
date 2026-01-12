@@ -1,7 +1,12 @@
 const { NxAppWebpackPlugin } = require('@nx/webpack/app-plugin');
 const { join } = require('path');
 
+console.log('LOADING CUSTOM WEBPACK CONFIG');
+
 module.exports = {
+  externals: {
+    argon2: 'commonjs argon2',
+  },
   output: {
     path: join(__dirname, '../../dist/apps/api-gateway'),
     clean: true,
