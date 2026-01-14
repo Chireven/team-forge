@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import '../styles.css';
 import { TeamManagerRoutes } from './lib.routes';
 
 const queryClient = new QueryClient({

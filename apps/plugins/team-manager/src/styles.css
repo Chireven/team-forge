@@ -1,1 +1,146 @@
-/* You can add global styles to this file, and also import other style files */
+/* Availability Grid Semantic Styles */
+
+.ag-grid-container {
+  overflow: hidden;
+  border-radius: 0.5rem; /* rounded-lg */
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.05),
+    0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow ring-1 */
+  background-color: white;
+}
+
+.ag-table-wrapper {
+  overflow-x: auto;
+}
+
+.ag-table {
+  min-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.ag-thead {
+  background-color: #f9fafb; /* bg-gray-50 */
+}
+
+.ag-th-member {
+  padding: 0.875rem 0.75rem 0.875rem 1rem; /* py-3.5 pl-4 pr-3 */
+  text-align: left;
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 600;
+  color: #111827; /* text-gray-900 */
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background-color: #f9fafb;
+  border-right: 1px solid #e5e7eb; /* border-gray-200 */
+  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.1);
+}
+
+.ag-th-date {
+  padding: 0.875rem 0.5rem;
+  text-align: center;
+  min-width: 60px;
+}
+
+.ag-date-weekday {
+  text-transform: uppercase;
+  color: #6b7280; /* text-gray-500 */
+  font-size: 0.75rem; /* text-xs */
+  font-weight: 600;
+  margin-bottom: 0.125rem;
+}
+
+.ag-date-day {
+  color: #111827;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.ag-row:hover {
+  background-color: #f9fafb; /* hover:bg-gray-50 */
+  transition: background-color 200ms;
+}
+
+.ag-td-member {
+  white-space: nowrap;
+  padding: 1rem 0.75rem 1rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #111827;
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background-color: white;
+  border-right: 1px solid #e5e7eb;
+  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.1);
+}
+
+.ag-member-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ag-avatar {
+  height: 2rem; /* h-8 */
+  width: 2rem; /* w-8 */
+  border-radius: 9999px;
+  background-color: #f1f5f9; /* bg-slate-100 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #475569; /* text-slate-600 */
+  font-weight: 700;
+  font-size: 0.75rem;
+  box-shadow: inset 0 0 0 1px #e2e8f0; /* ring-1 ring-slate-200 */
+}
+
+.ag-td-cell {
+  white-space: nowrap;
+  padding: 0.75rem 0.25rem;
+  text-align: center;
+  border-left: 1px dashed #f3f4f6; /* border-gray-100 */
+}
+
+/* Heatmap Cells */
+.ag-cell {
+  width: 100%;
+  height: 2.5rem; /* h-10 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem; /* rounded-md */
+  font-size: 0.875rem;
+  transition:
+    background-color 200ms,
+    color 200ms;
+  border: 1px solid transparent;
+}
+
+.ag-cell-empty {
+  background-color: #f9fafb;
+  color: #d1d5db; /* text-gray-300 */
+  font-weight: 400;
+}
+
+.ag-cell-healthy {
+  background-color: #d1fae5; /* bg-emerald-100 */
+  color: #065f46; /* text-emerald-800 */
+  font-weight: 500;
+  border-color: #a7f3d0;
+}
+
+.ag-cell-busy {
+  background-color: #fef3c7; /* bg-yellow-100 */
+  color: #92400e; /* text-yellow-800 */
+  font-weight: 500;
+  border-color: #fde68a;
+}
+
+.ag-cell-overloaded {
+  background-color: #fee2e2; /* bg-red-100 */
+  color: #991b1b; /* text-red-800 */
+  font-weight: 700;
+  border-color: #fca5a5;
+}

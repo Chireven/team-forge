@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { teamsApi } from '../../api';
 import { Button, tokens } from '@team-forge/shared/ui';
 import { AddMemberDialog } from '../../components/add-member-dialog/add-member-dialog';
+import { AvailabilityGrid } from '../../components/availability-grid/availability-grid';
 
 export const TeamDetailPage = () => {
     const { id } = useParams<{ id: string }>();
@@ -11,7 +12,7 @@ export const TeamDetailPage = () => {
     const [members, setMembers] = useState<any[]>([]); // Detailed members
     const [loading, setLoading] = useState(false);
     const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState<'MEMBERS' | 'PROJECTS' | 'SETTINGS'>('MEMBERS');
+    const [activeTab, setActiveTab] = useState<'MEMBERS' | 'PROJECTS' | 'SETTINGS' | 'CAPACITY'>('MEMBERS');
 
     useEffect(() => {
         loadTeam();
@@ -93,6 +94,7 @@ export const TeamDetailPage = () => {
 
             <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', marginBottom: tokens.spacing(4) }}>
                 <div style={tabStyle(activeTab === 'MEMBERS')} onClick={() => setActiveTab('MEMBERS')}>Members</div>
+                <div style={tabStyle(activeTab === 'CAPACITY')} onClick={() => setActiveTab('CAPACITY')}>Capacity</div>
                 <div style={tabStyle(activeTab === 'PROJECTS')} onClick={() => setActiveTab('PROJECTS')}>Projects</div>
                 <div style={tabStyle(activeTab === 'SETTINGS')} onClick={() => setActiveTab('SETTINGS')}>Settings</div>
             </div>
@@ -128,6 +130,18 @@ export const TeamDetailPage = () => {
                     ) : (
                         <p style={{ color: 'var(--text-secondary)' }}>No members found.</p>
                     )}
+                </div>
+            )}
+
+            {activeTab === 'CAPACITY' && (
+                <div style={{ marginTop: tokens.spacing(4) }}>
+                    <div style={{ marginBottom: tokens.spacing(2) }}>
+                        <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>Two-Week Team Availability</h2>
+                        <p style={{ color: 'var(--text-secondary)', margin: '4px 0 0 0', fontSize: '0.875rem' }}>
+                            Heatmap of assigned task hours.
+                        </p>
+                    </div>
+                    <AvailabilityGrid teamId={id || ''} />
                 </div>
             )}
 
