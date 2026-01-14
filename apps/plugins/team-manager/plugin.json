@@ -1,0 +1,11 @@
+{
+    "id": "com.teamforge.team-manager",
+    "version": "1.0.0",
+    "name": "Team Manager",
+    "entryPoint": "remoteEntry.js",
+    "permissions": [
+        "team.create",
+        "team.manage",
+        "team.view"
+    ]
+}

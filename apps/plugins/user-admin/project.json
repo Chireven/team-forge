@@ -1,5 +1,5 @@
 {
-  "name": "user-admin",
+  "name": "user_admin",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/plugins/user-admin/src",
   "projectType": "application",
@@ -55,16 +55,20 @@
       "executor": "@nx/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "user-admin:build",
+        "buildTarget": "user_admin:build",
         "hmr": true,
-        "port": 4201
+        "port": 4201,
+        "headers": {
+          "Access-Control-Allow-Origin": "*"
+        },
+        "proxyConfig": "apps/shell/proxy.conf.json"
       },
       "configurations": {
         "development": {
-          "buildTarget": "user-admin:build:development"
+          "buildTarget": "user_admin:build:development"
         },
         "production": {
-          "buildTarget": "user-admin:build:production",
+          "buildTarget": "user_admin:build:production",
           "hmr": false
         }
       }

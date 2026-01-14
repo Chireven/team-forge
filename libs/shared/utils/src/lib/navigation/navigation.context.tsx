@@ -6,7 +6,7 @@ export interface NavItem {
     path: string;
     icon?: string;
     permission?: string;
-    section: 'main' | 'settings' | 'user';
+    section: 'main' | 'settings' | 'user' | 'organization';
     order?: number;
 }
 

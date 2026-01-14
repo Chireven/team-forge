@@ -13,7 +13,8 @@ export const LoginPage = () => {
         e.preventDefault();
         try {
             const res = await axios.post('/api/auth/login', { email, password });
-            localStorage.setItem('token', res.data.access_token);
+            const token = res.data.data?.access_token || res.data.access_token;
+            localStorage.setItem('token', token);
             navigate('/');
         } catch (err: any) {
             setError(err.response?.data?.message || 'Invalid credentials');

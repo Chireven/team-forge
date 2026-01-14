@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from './entities/user.entity';
+import { SchemaService } from './services/schema.service';
 
 @Module({
     imports: [
@@ -9,23 +10,33 @@ import { User } from './entities/user.entity';
             isGlobal: true,
         }),
         TypeOrmModule.forRootAsync({
-            useFactory: () => ({
-                type: 'mssql',
-                host: process.env['DB_HOST'] || 'localhost',
-                port: parseInt(process.env['DB_PORT'] || '1433', 10),
-                username: process.env['DB_USER'] || 'sa',
-                password: process.env['MSSQL_SA_PASSWORD'] || 'YourStrong!Passw0rd',
-                database: process.env['DB_NAME'] || 'master', // Default to master or create specific DB
-                entities: [User],
-                synchronize: true, // Auto-create schema (DEV ONLY - Disable in Prod)
-                options: {
-                    encrypt: false, // For local docker usage often needed
-                    trustServerCertificate: true,
-                },
-            }),
+            inject: [ConfigService],
+            useFactory: (config: ConfigService) => {
+                const host = config.get('DB_HOST') || 'localhost';
+                const port = parseInt(config.get('DB_PORT') || '1433', 10);
+                const username = config.get('DB_USER') || 'sa';
+                const password = config.get('DB_PASSWORD') || config.get('SA_PASSWORD') || config.get('MSSQL_SA_PASSWORD') || 'YourStrong!Passw0rd';
+                const database = config.get('DB_NAME') || 'master';
+
+                return {
+                    type: 'mssql',
+                    host,
+                    port,
+                    username,
+                    password,
+                    database,
+                    autoLoadEntities: true,
+                    synchronize: true,
+                    options: {
+                        encrypt: false,
+                        trustServerCertificate: true,
+                    },
+                };
+            },
         }),
         TypeOrmModule.forFeature([User]),
     ],
-    exports: [TypeOrmModule],
+    providers: [SchemaService],
+    exports: [TypeOrmModule, SchemaService],
 })
 export class DataAccessModule { }

@@ -14,7 +14,8 @@ export const SetupPage = () => {
         e.preventDefault();
         try {
             const res = await axios.post('/api/auth/setup', { email, password, orgName });
-            localStorage.setItem('token', res.data.access_token);
+            const token = res.data.data?.access_token || res.data.access_token;
+            localStorage.setItem('token', token);
             navigate('/');
             window.location.reload(); // Force reload to re-run guard checks
         } catch (err: any) {

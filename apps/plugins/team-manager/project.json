@@ -1,0 +1,27 @@
+{
+  "name": "team_manager",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/plugins/team-manager/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
+      "options": {
+        "jestConfig": "apps/plugins/team-manager/jest.config.cts"
+      }
+    },
+    "serve": {
+      "options": {
+        "port": 4202,
+        "headers": {
+          "Access-Control-Allow-Origin": "*"
+        },
+        "proxyConfig": "apps/shell/proxy.conf.json"
+      }
+    }
+  }
+}

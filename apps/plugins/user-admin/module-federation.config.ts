@@ -1,9 +1,9 @@
 import { ModuleFederationConfig } from '@nx/module-federation';
 
 const config: ModuleFederationConfig = {
-    name: 'user-admin',
+    name: 'user_admin',
     exposes: {
-        './Module': './src/app/app.tsx',
+        './Module': './src/remote-entry.ts',
     },
     shared: (name, config) => {
         // React Core: Strict Singletons

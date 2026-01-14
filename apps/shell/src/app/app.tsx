@@ -9,7 +9,8 @@ import { NavigationProvider, useNavigation } from '@team-forge/shared/utils';
 import { PermissionProvider } from '@team-forge/shared/auth-client';
 import { DashboardLayout } from './components/layout/DashboardLayout';
 
-const UserAdmin = React.lazy(() => import('user-admin/Module'));
+const UserAdmin = React.lazy(() => import('user_admin/Module'));
+const TeamManager = React.lazy(() => import('team_manager/Module'));
 
 // Simple Guard Component
 const ProtectedRoute = ({ children }: { children: React.ReactElement }) => {
@@ -56,6 +57,14 @@ const ShellContent = () => {
       path: '/user-admin',
       section: 'settings',
       order: 10
+    });
+
+    registerNavItem({
+      id: 'teams',
+      label: 'Teams',
+      path: '/team-manager',
+      section: 'organization',
+      order: 1
     });
 
     const checkStatus = async () => {
@@ -105,6 +114,11 @@ const ShellContent = () => {
               <UserAdmin />
             </React.Suspense>
           } />
+          <Route path="/team-manager/*" element={
+            <React.Suspense fallback={<div>Loading Plugin...</div>}>
+              <TeamManager />
+            </React.Suspense>
+          } />
         </Route>
       </Routes>
     </React.Suspense>
@@ -146,6 +160,12 @@ const AuthLoader = ({ children }: { children: React.ReactNode }) => {
     });
 
     const token = localStorage.getItem('token');
+    if (token === 'undefined') {
+      localStorage.removeItem('token');
+      setLoaded(true);
+      return;
+    }
+
     if (token) {
       // 2. Fetch Profile
       axios.get('/api/auth/profile')

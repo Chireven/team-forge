@@ -14,18 +14,17 @@ export class UsersController {
     ) { }
 
     @Get()
-    @RequirePermission('user.admin')
     async findAll() {
         const users = await this.usersRepository.find({
             select: ['id', 'email', 'isSuperAdmin', 'createdAt'] // Exclude passwordHash
         });
-        return { data: users };
+        return users;
     }
 
     @Delete(':id')
     @RequirePermission('user.admin')
     async remove(@Param('id') id: string) {
         await this.usersRepository.delete(id);
-        return { data: { success: true } };
+        return { success: true };
     }
 }

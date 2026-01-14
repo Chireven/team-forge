@@ -13,4 +13,20 @@ export default composePlugins(
     withNx(),
     withReact(),
     withModuleFederation(config, { dts: false }),
+    (c) => {
+        c.output = {
+            ...c.output,
+            publicPath: 'http://localhost:4201/',
+            scriptType: 'text/javascript',
+        };
+        c.devServer = {
+            ...c.devServer,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+                "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
+            }
+        };
+        return c;
+    }
 );

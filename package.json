@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "lint:strict": "nx affected:lint --max-warnings=0"
+    "lint:strict": "nx affected:lint --max-warnings=0",
+    "db:heal": "nx db-heal data-access"
   },
   "devDependencies": {
     "@babel/core": "^7.14.5",
@@ -8,6 +9,7 @@
     "@eslint/js": "^9.8.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.0",
+    "@nx/devkit": "22.3.3",
     "@nx/eslint": "22.3.3",
     "@nx/eslint-plugin": "22.3.3",
     "@nx/jest": "^22.3.3",
@@ -15,11 +17,18 @@
     "@nx/module-federation": "22.3.3",
     "@nx/nest": "^22.3.3",
     "@nx/node": "^22.3.3",
+    "@nx/playwright": "22.3.3",
     "@nx/react": "^22.3.3",
+    "@nx/rspack": "22.3.3",
     "@nx/vite": "22.3.3",
     "@nx/web": "^22.3.3",
     "@nx/webpack": "^22.3.3",
+    "@playwright/test": "^1.36.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
+    "@rspack/cli": "^1.5.0",
+    "@rspack/core": "^1.5.0",
+    "@rspack/dev-server": "^1.1.4",
+    "@rspack/plugin-react-refresh": "^1.0.0",
     "@svgr/webpack": "^8.0.1",
     "@swc-node/register": "~1.9.1",
     "@swc/cli": "~0.6.0",
@@ -41,6 +50,7 @@
     "eslint-config-prettier": "^10.0.0",
     "eslint-plugin-import": "2.31.0",
     "eslint-plugin-jsx-a11y": "6.10.1",
+    "eslint-plugin-playwright": "^1.6.2",
     "eslint-plugin-react": "7.35.0",
     "eslint-plugin-react-hooks": "5.0.0",
     "jest": "^30.0.2",
@@ -51,7 +61,7 @@
     "jsdom": "~22.1.0",
     "jsonc-eslint-parser": "^2.1.0",
     "prettier": "~3.6.2",
-    "react-refresh": "^0.10.0",
+    "react-refresh": "~0.14.0",
     "ts-jest": "^29.4.0",
     "ts-node": "10.9.1",
     "tslib": "^2.3.0",

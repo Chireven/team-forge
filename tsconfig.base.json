@@ -18,48 +18,26 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "ui": [
-        "libs/shared/ui/src/index.ts"
-      ],
-      "@team-forge/shared/ui": [
-        "libs/shared/ui/src/index.ts"
-      ],
-      "auth-client": [
-        "libs/shared/auth-client/src/index.ts"
-      ],
-      "@team-forge/shared/auth-client": [
-        "libs/shared/auth-client/src/index.ts"
-      ],
-      "auth-server": [
-        "libs/shared/auth-server/src/index.ts"
-      ],
-      "@team-forge/shared/auth-server": [
-        "libs/shared/auth-server/src/index.ts"
-      ],
-      "utils": [
-        "libs/shared/utils/src/index.ts"
-      ],
-      "@team-forge/shared/utils": [
-        "libs/shared/utils/src/index.ts"
-      ],
-      "data-access": [
-        "libs/shared/data-access/src/index.ts"
-      ],
-      "@team-forge/shared/data-access": [
-        "libs/shared/data-access/src/index.ts"
-      ]
+      "ui": ["libs/shared/ui/src/index.ts"],
+      "@team-forge/shared/ui": ["libs/shared/ui/src/index.ts"],
+      "auth-client": ["libs/shared/auth-client/src/index.ts"],
+      "@team-forge/shared/auth-client": ["libs/shared/auth-client/src/index.ts"],
+      "auth-server": ["libs/shared/auth-server/src/index.ts"],
+      "@team-forge/shared/auth-server": ["libs/shared/auth-server/src/index.ts"],
+      "utils": ["libs/shared/utils/src/index.ts"],
+      "@team-forge/shared/utils": ["libs/shared/utils/src/index.ts"],
+      "data-access": ["libs/shared/data-access/src/index.ts"],
+      "@team-forge/shared/data-access": ["libs/shared/data-access/src/index.ts"],
+      "team-core-api": ["libs/team-core/api/src/index.ts"],
+      "@team-forge/team-core-api": ["libs/team-core/api/src/index.ts"],
+      "team_manager/Module": ["apps/plugins/team-manager/src/remote-entry.ts"],
+      "@team-forge/work-core-api": ["libs/api/work-core/src/index.ts"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }

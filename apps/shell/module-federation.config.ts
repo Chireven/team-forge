@@ -2,7 +2,7 @@ import { ModuleFederationConfig } from '@nx/module-federation';
 
 const config: ModuleFederationConfig = {
   name: 'shell',
-  remotes: [['user-admin', 'http://localhost:4201/remoteEntry.js']],
+  remotes: ['user_admin', 'team_manager'],
   shared: (name, config) => {
     // React Core: Strict Singletons
     if (['react', 'react-dom'].includes(name)) {
