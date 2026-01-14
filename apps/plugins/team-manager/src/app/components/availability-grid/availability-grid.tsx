@@ -1,37 +1,57 @@
 import { useEffect, useState } from 'react';
-import { UserAvailability } from '@team-forge/shared/data-access';
+import { UserAvailability, DailyTask } from '@team-forge/shared/data-access';
+import { TaskDrilldownDialog } from '../task-drilldown/task-drilldown-dialog';
 
 // Sub-component: AvailabilityCell
-const AvailabilityCell = ({ hours }: { hours: number }) => {
+const AvailabilityCell = ({
+  hours,
+  onClick,
+}: {
+  hours: number;
+  onClick: () => void;
+}) => {
   let cellClass = 'ag-cell-empty';
   let displayValue = hours > 0 ? hours.toString() : '-';
 
   if (hours > 24) {
-      displayValue = '24+';
-      cellClass = 'ag-cell-overloaded';
+    displayValue = '24+';
+    cellClass = 'ag-cell-overloaded';
   } else if (hours > 9) {
-      cellClass = 'ag-cell-overloaded';
+    cellClass = 'ag-cell-overloaded';
   } else if (hours > 6) {
-      cellClass = 'ag-cell-busy';
+    cellClass = 'ag-cell-busy';
   } else if (hours > 0) {
-      cellClass = 'ag-cell-healthy';
+    cellClass = 'ag-cell-healthy';
   }
 
   return (
     <div
-      className={`ag-cell ${cellClass}`}
-      title={`${hours} hours`}
+      onClick={onClick}
+      className={`ag-cell ${cellClass} ${
+        hours > 0 ? 'cursor-pointer hover:ring-2 hover:ring-blue-400' : ''
+      }`}
+      title={hours > 0 ? `${hours} hours - Click to view` : ''}
     >
       {displayValue}
     </div>
   );
 };
 
+interface SelectedCellData {
+  userId: string;
+  userName: string;
+  date: string;
+  tasks: DailyTask[];
+}
+
 export const AvailabilityGrid = ({ teamId }: { teamId: string }) => {
   const [data, setData] = useState<UserAvailability[]>([]);
   const [loading, setLoading] = useState(true);
   const [dates, setDates] = useState<Date[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCell, setSelectedCell] = useState<SelectedCellData | null>(
+    null
+  );
 
   useEffect(() => {
     // Generate next 14 days
@@ -71,15 +91,31 @@ export const AvailabilityGrid = ({ teamId }: { teamId: string }) => {
     }
   }, [teamId]);
 
+  const handleCellClick = (
+    user: UserAvailability,
+    date: string,
+    tasks: DailyTask[]
+  ) => {
+    if (!tasks || tasks.length === 0) return;
+    setSelectedCell({
+      userId: user.userId,
+      userName: user.userName,
+      date: date,
+      tasks: tasks,
+    });
+  };
+
+  const closeDialog = () => setSelectedCell(null);
+
   if (!teamId) return <div className="text-gray-500 p-4">Select a team to view availability.</div>;
   if (loading) return <div className="p-8 text-center text-gray-500 animate-pulse">Loading availability report...</div>;
   if (error) return <div className="p-4 text-red-600 bg-red-50 rounded border border-red-200">{error}</div>;
 
   return (
-    <div className="ag-grid-container">
+    <div className="ag-grid-container relative">
       <div className="ag-table-wrapper">
         <table className="ag-table">
-          <thead className="ag-thead">
+            <thead className="ag-thead">
             <tr>
               <th scope="col" className="ag-th-member">
                 Team Member
@@ -109,10 +145,16 @@ export const AvailabilityGrid = ({ teamId }: { teamId: string }) => {
                 </td>
                 {dates.map((d) => {
                   const dateKey = d.toISOString().split('T')[0];
-                  const hours = user.dailyLoad[dateKey] || 0;
+                  const dayData = user.dailyLoad[dateKey];
+                  const hours = dayData ? dayData.totalHours : 0;
+                  const tasks = dayData ? dayData.tasks : [];
+
                   return (
                     <td key={dateKey} className="ag-td-cell">
-                      <AvailabilityCell hours={hours} />
+                      <AvailabilityCell
+                        hours={hours}
+                        onClick={() => handleCellClick(user, dateKey, tasks)}
+                      />
                     </td>
                   );
                 })}
@@ -121,6 +163,14 @@ export const AvailabilityGrid = ({ teamId }: { teamId: string }) => {
           </tbody>
         </table>
       </div>
+
+      <TaskDrilldownDialog
+        isOpen={!!selectedCell}
+        onClose={closeDialog}
+        date={selectedCell?.date || ''}
+        userName={selectedCell?.userName || ''}
+        tasks={selectedCell?.tasks || []}
+      />
     </div>
   );
 };

@@ -1,10 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In, Between } from 'typeorm';
 import { TeamMember } from '@team-forge/team-core-api';
 import { Task } from '../entities/task.entity';
 import { AvailabilityReportDto } from '../dtos/availability-report.dto';
 import { User } from '@team-forge/shared/data-access';
+
+export interface DailyData {
+  totalHours: number;
+  tasks: {
+    id: string;
+    title: string;
+    project: { name: string };
+    estimatedHours: number;
+    dueDate: Date;
+    status: string;
+  }[];
+}
 
 @Injectable()
 export class ReportsService {
@@ -29,7 +41,14 @@ export class ReportsService {
       return [];
     }
 
-    const userMap = new Map<string, { userId: string; userName: string; dailyLoad: Record<string, number> }>();
+    const userMap = new Map<
+      string,
+      {
+        userId: string;
+        userName: string;
+        dailyLoad: Record<string, DailyData>;
+      }
+    >();
     const userIds: string[] = [];
 
     for (const m of members) {
@@ -51,33 +70,58 @@ export class ReportsService {
     }
 
     // 2. Aggregate Tasks
-    // Sum estimatedHours by assignee and CAST(dueDate AS DATE)
-    const rawData = await this.taskRepo
-      .createQueryBuilder('task')
-      .select('task.assigneeId', 'userId')
-      // Note: CAST(dueDate as DATE) is standard SQL. 
-      // For MS SQL (default provider mentioned in docs), CAST(dueDate AS DATE) works.
-      .addSelect('CAST(task.dueDate AS DATE)', 'date')
-      .addSelect('SUM(task.estimatedHours)', 'totalHours')
-      .where('task.assigneeId IN (:...userIds)', { userIds })
-      .andWhere('task.dueDate BETWEEN :startDate AND :endDate', { startDate, endDate })
-      .groupBy('task.assigneeId')
-      .addGroupBy('CAST(task.dueDate AS DATE)')
-      .getRawMany();
+    // Fetch full tasks to include details
+    // Note: We need to convert string dates to Date objects for querying if needed,
+    // but TypeORM usually handles string comparisons for dates fine if format is standard.
+    // However, to be safe with 'Between', strict types are better.
+    // Assuming startDate/endDate are YYYY-MM-DD
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    // Adjust end date to capture the full day?
+    // If the input is just '2023-01-01', new Date('2023-01-01') is midnight.
+    // To include the whole day of endDate, we might want to set it to end of day
+    // or assume the caller handles it. The previous code passed raw strings.
+    // Let's assume raw strings are fine for T-SQL/Postgres, but 'Between' with Date objects is safer for TypeORM across drivers.
+    // Let's stick to the raw strings first to match previous behavior logic,
+    // but previous behavior was raw SQL.
+    // `Between` in TypeORM usually needs compatible types.
+    // Let's strict cast them to Date.
+    end.setHours(23, 59, 59, 999);
+
+    const tasks = await this.taskRepo.find({
+      where: {
+        assigneeId: In(userIds),
+        dueDate: Between(start, end),
+      },
+      relations: ['project'],
+    });
 
     // 3. Map Data to Response
-    for (const row of rawData) {
-        const userId = row.userId;
-        const dateKey = row.date instanceof Date 
-            ? row.date.toISOString().split('T')[0] 
-            : new Date(row.date).toISOString().split('T')[0];
-            
-        const hours = parseFloat(row.totalHours);
+    for (const task of tasks) {
+      if (!task.dueDate || !task.assigneeId) continue;
 
-        const userEntry = userMap.get(userId);
-        if (userEntry) {
-            userEntry.dailyLoad[dateKey] = hours;
+      const dateKey = task.dueDate.toISOString().split('T')[0];
+      const userEntry = userMap.get(task.assigneeId);
+
+      if (userEntry) {
+        if (!userEntry.dailyLoad[dateKey]) {
+          userEntry.dailyLoad[dateKey] = {
+            totalHours: 0,
+            tasks: [],
+          };
         }
+
+        const dayData = userEntry.dailyLoad[dateKey];
+        dayData.totalHours += task.estimatedHours;
+        dayData.tasks.push({
+          id: task.id,
+          title: task.title,
+          project: { name: task.project?.name || 'Unknown Project' },
+          estimatedHours: task.estimatedHours,
+          dueDate: task.dueDate,
+          status: task.status,
+        });
+      }
     }
 
     return Array.from(userMap.values());
